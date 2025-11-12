@@ -1,2 +1,47 @@
 <?php
- namespace App\Helpers; class LicenseHelper { public static function verifyLicense() : array { $licensePath = storage_path("\141\160\x70\x2f\154\x69\x63\x65\x6e\x73\145\57\154\151\x63\145\x6e\x73\145\56\x64\x61\x74"); $publicKeyPath = storage_path("\x61\160\160\57\x6c\x69\143\x65\x6e\163\x65\57\160\x75\142\154\x69\143\56\x70\x65\x6d"); if (!file_exists($licensePath) || !file_exists($publicKeyPath)) { return array("\x76\141\154\x69\144" => false, "\155\x65\x73\163\x61\147\x65" => "\116\157\x20\163\x65\40\145\156\143\x6f\x6e\164\162\xc3\263\x20\154\x61\x20\154\151\143\x65\156\x63\151\141\x20\157\40\x6c\141\x20\x63\154\141\x76\x65\x20\160\xc3\xba\x62\154\x69\143\141\56"); } $licenseData = base64_decode(file_get_contents($licensePath)); list($data, $signature) = explode("\72\x3a", $licenseData); $dataArray = json_decode($data, true); if (!$dataArray) { return array("\x76\141\154\151\144" => false, "\x6d\145\163\x73\x61\147\x65" => "\x4c\x69\x63\145\x6e\x63\151\x61\x20\143\157\162\x72\165\160\x74\x61\40\157\x20\x69\x6c\145\x67\151\x62\154\145\x2e"); } $publicKey = file_get_contents($publicKeyPath); if (!openssl_verify($data, $signature, $publicKey, OPENSSL_ALGO_SHA256)) { return array("\x76\x61\154\151\x64" => false, "\x6d\145\163\163\x61\147\145" => "\114\x69\143\x65\x6e\143\x69\x61\40\x69\x6e\x76\303\xa1\x6c\151\144\141\x20\x6f\x20\x6d\x61\x6e\151\160\165\x6c\141\144\x61\56"); } require_once __DIR__ . "\x2f\150\x65\154\x70\145\162\163\56\x70\150\x70"; if ($dataArray["\146\x69\x6e\147\145\x72\x70\x72\x69\156\x74"] !== getSystemFingerprint()) { return array("\166\141\x6c\x69\x64" => false, "\155\x65\x73\163\141\x67\x65" => "\114\141\x20\154\x69\143\x65\156\143\151\x61\40\x6e\x6f\x20\143\x6f\x72\x72\x65\x73\x70\157\x6e\x64\x65\x20\x61\40\x65\163\x74\145\40\145\161\165\151\x70\157\56"); } if (strtotime($dataArray["\x65\x78\x70\151\162\145\163\x5f\x61\x74"]) < time()) { return array("\166\x61\x6c\151\144" => false, "\x6d\x65\x73\x73\141\147\x65" => "\x4c\x69\x63\x65\x6e\x63\x69\x61\40\x65\170\160\x69\x72\x61\144\x61\x2e"); } return array("\166\141\154\151\144" => true, "\x63\154\x69\145\x6e\164" => $dataArray["\143\x6c\151\145\156\164"], "\164\x79\160\145" => $dataArray["\x74\171\x70\145"], "\145\x78\x70\x69\x72\145\x73\137\x61\164" => $dataArray["\x65\170\x70\151\x72\145\x73\137\x61\x74"]); } }
+
+namespace App\Helpers;
+
+class LicenseHelper
+{
+    public static function verifyLicense(): array
+    {
+        $licensePath = storage_path('app/license/license.dat');
+        $publicKeyPath = storage_path('app/license/public.pem');
+
+        if (!file_exists($licensePath) || !file_exists($publicKeyPath)) {
+            return ['valid' => false, 'message' => 'No se encontró la licencia o la clave pública.'];
+        }
+
+        $licenseData = base64_decode(file_get_contents($licensePath));
+        list($data, $signature) = explode('::', $licenseData);
+        $dataArray = json_decode($data, true);
+
+        if (!$dataArray) {
+            return ['valid' => false, 'message' => 'Licencia corrupta o ilegible.'];
+        }
+
+        $publicKey = file_get_contents($publicKeyPath);
+        if (!openssl_verify($data, $signature, $publicKey, OPENSSL_ALGO_SHA256)) {
+            return ['valid' => false, 'message' => 'Licencia inválida o manipulada.'];
+        }
+
+        // Importa la función del helper original
+        require_once __DIR__ . '/helpers.php';
+        if ($dataArray['fingerprint'] !== getSystemFingerprint()) {
+            return ['valid' => false, 'message' => 'La licencia no corresponde a este equipo.'];
+        }
+
+        if (strtotime($dataArray['expires_at']) < time()) {
+            return ['valid' => false, 'message' => 'Licencia expirada.'];
+        }
+
+        return [
+            'valid' => true,
+            'client' => $dataArray['client'],
+            'type' => $dataArray['type'],
+            'expires_at' => $dataArray['expires_at'],
+        ];
+    }
+}
+

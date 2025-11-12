@@ -1,2 +1,73 @@
 <?php
- namespace App\Http; use Illuminate\Foundation\Http\Kernel as HttpKernel; class Kernel extends HttpKernel { protected $middleware = array(\Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class, \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class, \App\Http\Middleware\TrimStrings::class, \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class, \App\Http\Middleware\TrustProxies::class, \Barryvdh\Cors\HandleCors::class, \App\Http\Middleware\VerifyLicense::class); protected $middlewareGroups = array("\x77\145\x62" => array(\App\Http\Middleware\EncryptCookies::class, \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class, \Illuminate\Session\Middleware\StartSession::class, \Illuminate\View\Middleware\ShareErrorsFromSession::class, \App\Http\Middleware\VerifyCsrfToken::class, \Illuminate\Routing\Middleware\SubstituteBindings::class), "\141\x70\x69" => array("\x74\150\162\157\x74\x74\x6c\145\72\66\x30\54\x31", "\142\x69\156\144\151\156\147\163")); protected $routeMiddleware = array("\141\x75\x74\150" => \Illuminate\Auth\Middleware\Authenticate::class, "\x61\x75\164\x68\x2e\x62\x61\x73\x69\143" => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class, "\142\x69\x6e\144\x69\x6e\147\x73" => \Illuminate\Routing\Middleware\SubstituteBindings::class, "\143\141\x6e" => \Illuminate\Auth\Middleware\Authorize::class, "\147\165\145\x73\164" => \App\Http\Middleware\RedirectIfAuthenticated::class, "\x74\x68\162\x6f\x74\164\154\x65" => \Illuminate\Routing\Middleware\ThrottleRequests::class, "\162\x6f\154\x65" => \Spatie\Permission\Middlewares\RoleMiddleware::class, "\x70\145\x72\x6d\151\x73\163\151\x6f\x6e" => \Spatie\Permission\Middlewares\PermissionMiddleware::class, "\162\157\154\145\x5f\157\162\x5f\x70\145\x72\x6d\x69\x73\163\x69\157\x6e" => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class, "\162\145\163\x74\x61\x75\162\x61\x6e\164\145\x5f\141\x63\164\x69\166\157" => \App\Http\Middleware\RestaurantActivo::class, "\160\x65\144\x69\144\157\x73\x5f\150\141\142\x69\x6c\x69\x74\141\x64\x6f\163" => \App\Http\Middleware\PedidosHabilitados::class, "\x63\x61\x6a\141\163\137\x68\141\x62\151\x6c\x69\164\141\144\157\x73" => \App\Http\Middleware\CajasHabilitadas::class, "\143\x61\x6a\x65\162\157\163\137\150\x61\142\x69\154\151\x74\x61\144\157\163" => \App\Http\Middleware\CajerosHabilitados::class, "\x6d\x6f\172\x6f\163\137\x68\141\142\151\154\151\164\141\x64\x6f\163" => \App\Http\Middleware\MozosHabilitados::class, "\143\x6f\x63\x69\156\145\x72\x6f\x73\x5f\150\141\142\x69\x6c\151\164\141\144\157\x73" => \App\Http\Middleware\CocinerosHabilitados::class, "\165\163\165\141\162\x69\157\x73\x5f\141\143\164\151\166\x6f\x73" => \App\Http\Middleware\UsuariosActivos::class); }
+
+namespace App\Http;
+
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
+
+class Kernel extends HttpKernel
+{
+    /**
+     * The application's global HTTP middleware stack.
+     *
+     * These middleware are run during every request to your application.
+     *
+     * @var array
+     */
+    protected $middleware = [
+        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \App\Http\Middleware\TrustProxies::class,
+        \Barryvdh\Cors\HandleCors::class,
+        //\App\Http\Middleware\VerifyLicense::class,
+    ];
+
+    /**
+     * The application's route middleware groups.
+     *
+     * @var array
+     */
+    protected $middlewareGroups = [
+        'web' => [
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            // \Illuminate\Session\Middleware\AuthenticateSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+
+        'api' => [
+            'throttle:60,1',
+            'bindings',
+        ],
+    ];
+
+    /**
+     * The application's route middleware.
+     *
+     * These middleware may be assigned to groups or used individually.
+     *
+     * @var array
+     */
+    protected $routeMiddleware = [
+        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
+        'restaurante_activo' => \App\Http\Middleware\RestaurantActivo::class,
+        'pedidos_habilitados' => \App\Http\Middleware\PedidosHabilitados::class,
+        'cajas_habilitados' => \App\Http\Middleware\CajasHabilitadas::class,
+        'cajeros_habilitados' => \App\Http\Middleware\CajerosHabilitados::class,
+        'mozos_habilitados' => \App\Http\Middleware\MozosHabilitados::class,
+        'cocineros_habilitados' => \App\Http\Middleware\CocinerosHabilitados::class,
+        'usuarios_activos' => \App\Http\Middleware\UsuariosActivos::class,
+    ];
+}

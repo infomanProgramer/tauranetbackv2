@@ -31,6 +31,20 @@ mkdir -p /var/www/bootstrap/cache
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 chmod -R 775 /var/www/storage /var/www/bootstrap/cache || true
 
+# Cargar archivos de licencia desde variables de entorno si están presentes
+mkdir -p /var/www/storage/app/license || true
+if [ -n "${LICENSE_DAT_B64:-}" ]; then
+  echo "$LICENSE_DAT_B64" | base64 -d > /var/www/storage/app/license/license.dat || true
+fi
+if [ -n "${PUBLIC_PEM_B64:-}" ]; then
+  echo "$PUBLIC_PEM_B64" | base64 -d > /var/www/storage/app/license/public.pem || true
+fi
+# Permitir fijar fingerprint para que coincida con la licencia
+if [ -n "${LICENSE_FINGERPRINT:-}" ]; then
+  echo -n "$LICENSE_FINGERPRINT" > /var/www/storage/app/system_id.txt || true
+fi
+chown -R www-data:www-data /var/www/storage || true
+
 # Preparación de la app
 if [ ! -f /var/www/.env ] && [ -f /var/www/.env.example ]; then
   cp /var/www/.env.example /var/www/.env

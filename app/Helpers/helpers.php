@@ -1,2 +1,23 @@
 <?php
- function getSystemFingerprint() { $file = storage_path("\x61\x70\160\57\163\171\163\x74\145\x6d\137\x69\x64\56\x74\x78\x74"); if (file_exists($file)) { return trim(file_get_contents($file)); } $mac = @shell_exec("\x67\x65\164\x6d\141\x63"); $disk = @shell_exec("\167\155\x69\143\40\x64\x69\163\153\144\x72\x69\x76\x65\x20\147\x65\164\x20\163\x65\162\151\141\154\x6e\x75\155\x62\145\162\x20\62\76\46\x31"); $hostname = gethostname(); $rawData = ($mac ?: '') . ($disk ?: '') . $hostname; $fingerprint = md5($rawData); file_put_contents($file, $fingerprint); return $fingerprint; } ?>
+function getSystemFingerprint() {
+    $file = storage_path('app/system_id.txt');
+    // Si ya existe el ID guardado, úsalo siempre
+    if (file_exists($file)) {
+        return trim(file_get_contents($file));
+    }
+
+    // Si no existe, genera uno nuevo basado en hardware y entorno
+    $mac = @shell_exec('getmac');
+    $disk = @shell_exec('wmic diskdrive get serialnumber 2>&1');
+    $hostname = gethostname();
+
+    // Si alguna llamada falla, se evita error usando valores vacíos
+    $rawData = ($mac ?: '') . ($disk ?: '') . $hostname;
+
+    // Genera un hash estable y lo guarda
+    $fingerprint = md5($rawData);
+    file_put_contents($file, $fingerprint);
+
+    return $fingerprint;
+}
+?>
