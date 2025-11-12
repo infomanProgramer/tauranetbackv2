@@ -43,7 +43,11 @@ WORKDIR /var/www
 
 COPY . .
 
-RUN composer install --no-interaction --prefer-dist
+# Copiar script de arranque y hacerlo ejecutable
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+RUN composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
 
 COPY ./docker/php.ini /usr/local/etc/php/
 
@@ -54,4 +58,4 @@ RUN mkdir -p /var/www/bootstrap/cache \
 # Exponer el puerto de PHP-FPM
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD ["/usr/local/bin/start.sh"]
