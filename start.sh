@@ -9,6 +9,10 @@ echo "ServerName localhost" > /etc/apache2/conf-available/servername.conf
 a2enconf servername >/dev/null 2>&1 || true
 
 # Configurar VirtualHost para el puerto de Render y habilitar .htaccess
+# Asegurar valor por defecto para APACHE_LOG_DIR para evitar variable no definida
+export APACHE_LOG_DIR=${APACHE_LOG_DIR:-/var/log/apache2}
+
+# Usar heredoc normal para expandir ${PORT} y ${APACHE_LOG_DIR}
 cat > /etc/apache2/sites-available/000-default.conf <<EOF
 <VirtualHost *:${PORT}>
     ServerName localhost
@@ -17,8 +21,8 @@ cat > /etc/apache2/sites-available/000-default.conf <<EOF
         AllowOverride All
         Require all granted
     </Directory>
-    ErrorLog \\${APACHE_LOG_DIR}/error.log
-    CustomLog \\${APACHE_LOG_DIR}/access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOF
 
