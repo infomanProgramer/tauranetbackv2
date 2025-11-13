@@ -54,7 +54,6 @@ COPY ./docker/php.ini /usr/local/etc/php/
 RUN mkdir -p /var/www/bootstrap/cache \
     && chmod -R 777 /var/www/storage /var/www/bootstrap/cache \
     && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-RUN php artisan config:clear && php artisan config:cache
 
 # Exponer el puerto de PHP-FPM
 EXPOSE 80

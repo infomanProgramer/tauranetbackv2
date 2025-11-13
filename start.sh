@@ -46,9 +46,9 @@ fi
 chown -R www-data:www-data /var/www/storage || true
 
 # Preparación de la app
-if [ ! -f /var/www/.env ] && [ -f /var/www/.env.example ]; then
-  cp /var/www/.env.example /var/www/.env
-fi
+# if [ ! -f /var/www/.env ] && [ -f /var/www/.env.example ]; then
+#   cp /var/www/.env.example /var/www/.env
+# fi
 
 # Generar APP_KEY si falta
 if ! grep -q "^APP_KEY=" /var/www/.env || [ -z "$(grep '^APP_KEY=' /var/www/.env | cut -d '=' -f2)" ]; then
@@ -56,6 +56,7 @@ if ! grep -q "^APP_KEY=" /var/www/.env || [ -z "$(grep '^APP_KEY=' /var/www/.env
 fi
 
 php artisan config:clear || true
+php artisan cache:clear || true
 php artisan route:clear || true
 php artisan view:clear || true
 php artisan config:cache || true
