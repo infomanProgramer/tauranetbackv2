@@ -13,7 +13,17 @@ yarn-error.log
 #.env
 #.env.*
 .phpunit.result.cache
-/storage/logs
-/storage/framework
+
+# Ignorar el contenido de storage excepto las carpetas requeridas
+/storage/*
+!storage/app/
+!storage/framework/
+!storage/logs/
+!storage/framework/cache/
+!storage/framework/sessions/
+!storage/framework/views/
+!storage/**/*.gitkeep
+
+
 /public/storage
 /.DS_Store
