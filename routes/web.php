@@ -10,6 +10,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/debug-error', function () {
+    return file_get_contents(storage_path('logs/laravel.log'));
+});
 
 Route::get('/license-error', function () {
     return view('license.error', [
