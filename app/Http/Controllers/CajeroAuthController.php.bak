@@ -75,9 +75,7 @@ class CajeroAuthController extends Controller
             'c.id_administrador',
             'c.id_caja',
             'c.id_superadministrador',
-            's.id_sucursal',
-            's.prefijo',
-            's.whatsapp_cocina')
+            's.id_sucursal')
         ->first();
 
         return response()->json($user);

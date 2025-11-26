@@ -73,8 +73,7 @@
       {{ $identificacion }}: {{ $datosCliente['dni'] }}<br>
     @endif
     Servicio: @if($paymentDetails['tipo_servicio'] == 0) Mesa @elseif($paymentDetails['tipo_servicio'] == 1) Delivery @else Para llevar @endif <br>
-    Fecha: {{ $fecha_atencion }} <br>
-    Hora: {{ date('H:i', strtotime($hora_atencion)) }}
+    Fecha: {{ $fechaActual }} - {{ date('H:i') }}
   </p>
   <table>
     <thead>

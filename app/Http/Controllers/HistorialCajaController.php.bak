@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Response;
 use App\HistorialCaja;
 use DB;
 use Validator;
-use Illuminate\Support\Facades\Log;
 
 class HistorialCajaController extends ApiController
 {
@@ -27,9 +26,7 @@ class HistorialCajaController extends ApiController
                         ->get();
         $suma = 0;
         foreach ($hcaja as $key => $value) {
-            if($value->estado_venta == 0){
-                $suma += $value->importe;
-            }
+            $suma += $value->importe;
         }
         $historial = HistorialCaja::find($idHistorialCaja);
         $historial->monto = $historial->monto_inicial + $suma;

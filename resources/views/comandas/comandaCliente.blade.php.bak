@@ -48,23 +48,21 @@
       text-align: center;
     }
     .producto {
-      width: 55%;
-      padding: 0 2px;
-      white-space: normal;
-      word-break: break-word;
+      width: 40%;
     }
-    .notas {
-      width: 30%;
-      font-style: italic;
-      color: #555;
-      font-size: 10px;
+    .punit {
+      width: 20%;
+      text-align: right;
+    }
+    .importe {
+      width: 25%;
+      text-align: right;
     }
   </style>
 </head>
 <body>
-  {{-- <h2>{{ $nombre_restaurant }}</h2>
-  <h3>{{ $sucursal }} - {{ $caja }}</h3> --}}
-  <h3 class="center"><strong>Pedido # {{ $numero }}</strong></h3>
+  <h2>{{ $nombre_restaurant }}</h2>
+  <h3>{{ $sucursal }} - {{ $caja }}</h3>
   <p>
     @if(!empty($datosCliente['nombre_completo']))
       Cliente: {{ $datosCliente['nombre_completo'] }} <br>
@@ -73,15 +71,16 @@
       {{ $identificacion }}: {{ $datosCliente['dni'] }}<br>
     @endif
     Servicio: @if($paymentDetails['tipo_servicio'] == 0) Mesa @elseif($paymentDetails['tipo_servicio'] == 1) Delivery @else Para llevar @endif <br>
-    Fecha: {{ $fecha_atencion }} <br>
-    Hora: {{ date('H:i', strtotime($hora_atencion)) }}
+    Fecha: {{ $fechaActual }} - {{ date('H:i') }}
   </p>
+  <p class="center"><strong>Pedido # {{ $numero }}</strong></p>
   <table>
     <thead>
       <tr>
         <th class="cantidad">Cant</th>
         <th class="producto">Prod</th>
-        <th class="notas">Notas</th>
+        <th class="punit">P.Unit</th>
+        <th class="importe">Importe</th>
       </tr>
     </thead>
     <tbody>
@@ -89,12 +88,16 @@
         <tr>
           <td class="cantidad">{{ $item->cantidad }}x</td>
           <td class="producto">{{ $item->detalle }}</td>
-          <td class="notas">{{ $item->nota }}</td>
+          <td class="punit">{{ $item->p_unit }}</td>
+          <td class="importe">{{ $item->importe }}</td>
         </tr>
       @endforeach
     </tbody>
   </table>
 
   <hr>
+  <p class="total">TOTAL: {{ $paymentDetails['importe'] }} Bs</p>
+
+  <p class="center">¡Gracias por su pedido!</p>
 </body>
 </html>
