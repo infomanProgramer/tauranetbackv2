@@ -303,8 +303,8 @@ class SucursalController extends ApiController
         
         $sucursal = Sucursal::find($id);
 
-        if($request->has('prefijo')){
-            $sucursal->prefijo = $request->prefijo;
+        if($request->has('nuevo_prefijo')){
+            $sucursal->prefijo = $request->nuevo_prefijo;
         }
         if($request->has('nuevo_numero')){
             $sucursal->whatsapp_cocina = $request->nuevo_numero;
