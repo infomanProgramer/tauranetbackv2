@@ -8,7 +8,6 @@ use DB;
 use App\Producto;
 use Validator;
 use File;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -145,7 +144,7 @@ class ProductoController extends ApiController
         }
         $producto->id_categoria_producto = $request->get("id_categoria_producto");
         if($request->hasFile('image')){
-            $producto->producto_image = $request->image->store('imagesProductos', 'public');
+            $producto->producto_image = $request->image->store('', 'imagesProductos');
         }
         $producto->save();
         return response()->json(['data' => $producto], 201);
@@ -210,7 +209,7 @@ class ProductoController extends ApiController
             $producto->id_categoria_producto = $request->get("id_categoria_producto");
         }
         if($request->hasFile('image')){
-            $producto->producto_image = $request->image->store('imagesProductos', 'public');
+            $producto->producto_image = $request->image->store('', 'imagesProductos');
         }
         if(!$producto->isDirty()){
             return $this->errorResponse(['valores' => 'Se debe modificar al menos un valor para poder actualizar'], 201);
@@ -220,23 +219,12 @@ class ProductoController extends ApiController
     }
     public function destroy($id)
     {
-        $producto = Producto::findOrFail($id);
-        if ($producto->producto_image) {
-            \Log::info('destroy producto nuevo método -> '.$producto->producto_image);
-            // El archivo fue guardado con store('imagesProductos', 'public'),
-            // por lo tanto su ruta física está en storage/app/public/<ruta>.
-            Storage::disk('public')->delete($producto->producto_image);
-        }
         $producto = Producto::find($id)->delete();
         return response()->json(['data' => $producto], 201);
     }
     public function destroyImage($id){
         $producto = Producto::findOrFail($id);
-        if ($producto->producto_image) {
-            // El archivo fue guardado con store('imagesProductos', 'public'),
-            // por lo tanto su ruta física está en storage/app/public/<ruta>.
-            Storage::disk('public')->delete($producto->producto_image);
-        }
+        File::delete('imgProductos/'.$producto->producto_image);
         $producto->producto_image = null;
         $producto->save();
         $response = Response::json(['data' => $producto], 200);
