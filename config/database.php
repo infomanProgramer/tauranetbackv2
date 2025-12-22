@@ -64,13 +64,7 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
-            'schema' => 'public',
-            'sslmode' => env('DB_SSLMODE', 'require'),
-
-            // Recomendado para Neon + Pooler
-            'options' => extension_loaded('pdo_pgsql') ? [
-                PDO::PGSQL_ATTR_DISABLE_PREPARES => true,
-            ] : [],
+            'schema' => 'public'
         ],
 
         'sqlsrv' => [
