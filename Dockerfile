@@ -55,6 +55,9 @@ RUN mkdir -p /var/www/bootstrap/cache \
     && chmod -R 777 /var/www/storage /var/www/bootstrap/cache \
     && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
+RUN php artisan config:clear || true && \
+    php artisan cache:clear || true && \
+    php artisan route:clear || true
 # Exponer el puerto de PHP-FPM
 EXPOSE 80
 
