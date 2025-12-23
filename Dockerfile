@@ -1,60 +1,65 @@
-FROM php:8.1-apache
+FROM php:7.2-apache
 
-# Instalar dependencias del sistema
-RUN apt-get update \
+# Instalar dependencias del sistema necesarias para extensiones
+RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list \
+ && sed -i '/security.debian.org/d' /etc/apt/sources.list \
+ && apt-get update \
  && apt-get install -y \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
     libzip-dev \
     libpq-dev \
-    libonig-dev\
     zip \
     unzip \
     git \
-    curl \
- && rm -rf /var/lib/apt/lists/*
+    curl
 
-# Instalar extensiones PHP
-RUN docker-php-ext-install \
-    pdo \
-    pdo_pgsql \
-    pgsql \
-    mbstring \
-    exif \
-    bcmath \
-    zip \
-    gd
+# Instalar extensiones de PHP
+RUN docker-php-ext-configure gd \
+        --with-freetype-dir=/usr/include/ \
+        --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-install \
+        pdo \
+        pdo_pgsql \
+        pgsql \
+        mbstring \
+        exif \
+        bcmath \
+        zip \
+        gd
 
-# Habilitar mod_rewrite
+# Habilitar mod_rewrite de Apache
 RUN a2enmod rewrite
 
 # Cambiar DocumentRoot a /var/www/public
 RUN sed -i 's|/var/www/html|/var/www/public|g' /etc/apache2/sites-available/000-default.conf
 
-# Instalar Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Instalar Composer 1.8.6
+RUN curl -sS https://getcomposer.org/download/1.8.6/composer.phar -o /usr/local/bin/composer && \
+    chmod +x /usr/local/bin/composer
 
 WORKDIR /var/www
 
 COPY . .
 
-# Instalar dependencias de Laravel
-RUN composer install --no-interaction --no-dev --optimize-autoloader
+# Copiar script de arranque y hacerlo ejecutable
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
 
-# Limpiar cache de Laravel (Render Free)
-RUN php artisan config:clear || true
-RUN php artisan cache:clear || true
-RUN php artisan route:clear || true
+RUN composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
 
-# PHP config
 COPY ./docker/php.ini /usr/local/etc/php/
 
-# Permisos
-RUN mkdir -p storage bootstrap/cache \
- && chmod -R 777 storage bootstrap/cache \
- && chown -R www-data:www-data storage bootstrap/cache
+RUN mkdir -p /var/www/bootstrap/cache \
+    && chmod -R 777 /var/www/storage /var/www/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
+RUN php artisan config:clear || true && \
+    php artisan cache:clear || true && \
+    php artisan route:clear || true
+
+# Exponer el puerto de PHP-FPM
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD ["/usr/local/bin/start.sh"]
