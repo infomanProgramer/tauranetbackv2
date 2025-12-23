@@ -1,9 +1,9 @@
 FROM php:8.1-apache
 
 # Instalar dependencias del sistema necesarias para extensiones
-RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list \
- && sed -i '/security.debian.org/d' /etc/apt/sources.list \
- && apt-get update \
+# RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list \
+# && sed -i '/security.debian.org/d' /etc/apt/sources.list \
+RUN apt-get update \
  && apt-get install -y \
     libpng-dev \
     libjpeg62-turbo-dev \
