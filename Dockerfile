@@ -8,6 +8,7 @@ RUN apt-get update \
     libfreetype6-dev \
     libzip-dev \
     libpq-dev \
+    libonig-dev\
     zip \
     unzip \
     git \
@@ -15,18 +16,15 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # Instalar extensiones PHP
-RUN docker-php-ext-configure gd \
-        --with-freetype \
-        --with-jpeg \
-    && docker-php-ext-install \
-        pdo \
-        pdo_pgsql \
-        pgsql \
-        mbstring \
-        exif \
-        bcmath \
-        zip \
-        gd
+RUN docker-php-ext-install \
+    pdo \
+    pdo_pgsql \
+    pgsql \
+    mbstring \
+    exif \
+    bcmath \
+    zip \
+    gd
 
 # Habilitar mod_rewrite
 RUN a2enmod rewrite
