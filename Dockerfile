@@ -1,4 +1,4 @@
-FROM php:7.2-apache
+FROM php:8.1-apache
 
 # Instalar dependencias del sistema necesarias para extensiones
 RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list \
