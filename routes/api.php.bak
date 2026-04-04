@@ -136,7 +136,7 @@ Route::group([
 
     //Rutas Cajero
     Route::group(['middleware' => 'auth:cajero'], function () {
-        Route::get('historialcaja/caja/{idCaja}/page/{pag}', 'HistorialCajaController@index');
+        Route::get('historialcaja/caja/{idCaja}/page/{page}', 'HistorialCajaController@index');
         Route::post('historialcaja/{idCaja}', 'HistorialCajaController@store');
         Route::put('cashclosing/{id}', 'HistorialCajaController@cashClosing');
         Route::get('ventaproductos/caja/{idCaja}', 'VentaProductoController@index');//Muestra el historial de pedidos
@@ -170,7 +170,6 @@ Route::group([
         Route::post('detalleproductospdf', 'ReporteController@detalleProductoPDF');
         //Detalle ventas por empleado
         Route::get('empleadopedido/{idRestaurante}/fechaini/{fechaIni}/fechafin/{fechaFin}', 'ReporteController@empleadoPedido');
-        //Route::get('fechaimporte/{idRestaurante}/fechaini/{fechaIni}/fechafin/{fechaFin}', 'ReporteController@fechaImporte');
         Route::get('fechapedido/{idRestaurante}/fechaini/{fechaIni}/fechafin/{fechaFin}', 'ReporteController@fechaPedidos');
         Route::get('reportehoy/{idRestaurante}', 'ReporteController@getReportesHoy');
         Route::get('getgestionespagos', 'CajeroController@getGestionesPagos');
@@ -214,6 +213,9 @@ Route::group([
 
         //Ventas
         Route::post('updateventaproducto', 'VentaProductoController@updateVentaProducto');
+
+        //Adicionar rutas whatsapp
+        Route::put('changewhatsapp/{id}', 'SucursalController@updateWhatsapp');
     });
 
     //Rutas Administrador

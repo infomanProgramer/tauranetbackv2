@@ -35,9 +35,6 @@ Route::group([
 
     //Autenticacion Cajero
     Route::post('login-cajero', 'CajeroAuthController@login')->middleware('restaurante_activo', 'usuarios_activos');
-    Route::post('logout-cajero', 'CajeroAuthController@logout');
-    Route::post('refresh-cajero', 'CajeroAuthController@refresh');
-    Route::post('me-cajero', 'CajeroAuthController@me');
 
     //Autenticacion Mozo
     Route::post('login-mozo', 'MozoAuthController@login')->middleware('restaurante_activo', 'usuarios_activos');
@@ -136,6 +133,10 @@ Route::group([
 
     //Rutas Cajero
     Route::group(['middleware' => 'auth:cajero'], function () {
+        Route::post('logout-cajero', 'CajeroAuthController@logout');
+        Route::post('refresh-cajero', 'CajeroAuthController@refresh');
+        Route::post('me-cajero', 'CajeroAuthController@me');
+
         Route::get('historialcaja/caja/{idCaja}/page/{page}', 'HistorialCajaController@index');
         Route::post('historialcaja/{idCaja}', 'HistorialCajaController@store');
         Route::put('cashclosing/{id}', 'HistorialCajaController@cashClosing');

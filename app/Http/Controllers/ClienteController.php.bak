@@ -251,6 +251,7 @@ class ClienteController extends ApiController
                 $pago = new Pago();
                 $pago->efectivo = $request->get("efectivo");
                 $pago->importe = $request->get("importe");
+                //$pago->importe_base = $request->get("importe_base");
                 $pago->cambio = $request->get("cambio");
                 $pago->id_venta_producto = $vproducto->id_venta_producto;
                 $pago->id_cajero = $request->get("id_cajero");

@@ -46,6 +46,7 @@ class CajeroAuthController extends Controller
     public function me(){
         // \Log::info('Usuario autenticado prueba de logs:');
         // return response()->json(auth('cajero')->user());
+        
 
         $user = \DB::table('cajeros as c')
         ->join('cajas as ca', 'ca.id_caja', '=', 'c.id_caja')

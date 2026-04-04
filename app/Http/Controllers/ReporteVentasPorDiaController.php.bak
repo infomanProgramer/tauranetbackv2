@@ -80,13 +80,11 @@ class ReporteVentasPorDiaController extends ApiController
 
     //Exportar reporte de ventas por día a Excel
     public function getReportePerDayExcel($idRestaurante, $fecha){
-        Log::info('getReportePerDayExcel - idRestaurante: ' . $idRestaurante . ', fecha: ' . $fecha);
+        Log::info('exportReportePerDay - idRestaurante: ' . $idRestaurante . ', fecha: ' . $fecha);
         if($fecha == 'null'){
-            Log::info('Ingresa al error cuando fecha es nula');
-            $response = Response::json(['error' => ['fecha' => 'Fecha es requerido']], 200);
-            return $response;
+            return response()->json(['error' => ['fecha' => ['Fecha es requerido']]], 200);
         }
-        Log::info('Si la fecha no es nula');
+
         $ventasPorDiaXlsx = DB::table('venta_productos as vp')->selectRaw("
                 CAST(vp.created_at AS TIME) as hora,
                 vp.nro_venta as nro_pedido,
