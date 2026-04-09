@@ -11,6 +11,8 @@ use Validator;
 use App\Pago;
 use App\Rules\UniqueCliente;
 use Illuminate\Validation\Rule;
+use App\Http\Controllers\ComandaController;
+
 
 class ClienteController extends ApiController
 {
@@ -163,6 +165,7 @@ class ClienteController extends ApiController
         }
     }
     public function storePago(Request $request){
+        $comandaController = new ComandaController();
         $hcaja = DB::table('historial_caja as h')
             ->where("h.id_caja", "=", $request->id_caja)
             ->where("h.estado", "=","true")->get();
@@ -257,17 +260,19 @@ class ClienteController extends ApiController
                 $pago->tipo_pago = $request->get("tipo_pago");
                 $pago->tipo_servicio = $request->get("tipo_servicio");
                 $pago->save();
+                
                 //Saca el nro de pedido
                 $listaProd = DB::table(DB::raw("registraProductosFunction('" . $request->listaProductos . "', " . $vproducto->id_venta_producto . ")"))->get();
                 $nro_pedido = DB::table('venta_productos')->where('id_historial_caja', '=', $hcaja[0]->id_historial_caja)->where('id_venta_producto', '<=', $vproducto->id_venta_producto)->count();
                 $ult_vproducto = VentaProducto::find($vproducto->id_venta_producto);
+                $datosComanda = $comandaController->queryComanda($vproducto->id_venta_producto);
+                \Log::debug('ClienteController - datosComanda: '.json_encode($datosComanda));
                 $ult_vproducto->nro_venta = $nro_pedido;
                 $ult_vproducto->save();
                 return response()->json([
-                    'data' => $listaProd,
-                    'vprod' => $vproducto,
                     'nro_pedido' => $nro_pedido,
-                    'pago' => $pago
+                    'datosComanda' => $datosComanda,
+                    'id_venta_producto' => $vproducto->id_venta_producto,
                 ], 201);
             }else{
                 return $this->errorResponse(['efectivo_mayor' => 'El efectivo tiene que ser mayor o igual al total'], 201);

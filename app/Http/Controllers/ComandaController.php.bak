@@ -22,6 +22,8 @@ class ComandaController extends ApiController
         $paymentDetails = $request->input('paymentDetails');
         $identificacion = $request->input('identificacion');
         $isForCustomer = $request->input('isForCustomer');
+        $fecha_atencion = $request->input('fecha_atencion');
+        $hora_atencion = $request->input('hora_atencion');
 
         //Parsear lista de productos
         $listaProductos = explode(':', $listaProductos);
@@ -50,7 +52,8 @@ class ComandaController extends ApiController
             'nombre_restaurant' => $nombre_restaurant,
             'sucursal' => $sucursal,
             'caja' => $caja,
-            'fechaActual' => $fechaActual,
+            'fecha_atencion' => $fecha_atencion,
+            'hora_atencion' => $hora_atencion,
             'identificacion' => $identificacion
         ];
         if($isForCustomer){
