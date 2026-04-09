@@ -66,15 +66,12 @@
   <h3>{{ $sucursal }} - {{ $caja }}</h3> --}}
   <h3 class="center"><strong>Pedido # {{ $numero }}</strong></h3>
   <p>
-    @if(!empty($datosCliente['nombre_completo']))
-      Cliente: {{ $datosCliente['nombre_completo'] }} <br>
+    @if(!empty($result[0]->nombre_cliente))
+      Cliente: {{ $result[0]->nombre_cliente }} <br>
     @endif
-    @if(!empty($datosCliente['dni']))
-      {{ $identificacion }}: {{ $datosCliente['dni'] }}<br>
-    @endif
-    Servicio: @if($paymentDetails['tipo_servicio'] == 0) Mesa @elseif($paymentDetails['tipo_servicio'] == 1) Delivery @else Para llevar @endif <br>
-    Fecha: {{ $fecha_atencion }} <br>
-    Hora: {{ date('H:i', strtotime($hora_atencion)) }}
+    Servicio: {{ $result[0]->tipo_servicio }} <br>
+    Fecha: {{ $result[0]->fecha }} <br>
+    Hora: {{ $result[0]->hora }}
   </p>
   <table>
     <thead>
@@ -85,10 +82,10 @@
       </tr>
     </thead>
     <tbody>
-      @foreach($items as $item)
+      @foreach($result as $item)
         <tr>
           <td class="cantidad">{{ $item->cantidad }}x</td>
-          <td class="producto">{{ $item->detalle }}</td>
+          <td class="producto">{{ $item->nombre_producto }}</td>
           <td class="notas">{{ $item->nota }}</td>
         </tr>
       @endforeach
@@ -96,5 +93,8 @@
   </table>
 
   <hr>
+  @else
+    <p class="center">Error!! al imprimir la comanda</p>
+  @endif
 </body>
 </html>

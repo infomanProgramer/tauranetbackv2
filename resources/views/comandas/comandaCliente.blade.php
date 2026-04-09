@@ -61,44 +61,45 @@
   </style>
 </head>
 <body>
-  <h2>{{ $nombre_restaurant }}</h2>
-  <h3>{{ $sucursal }} - {{ $caja }}</h3>
-  <p>
-    @if(!empty($datosCliente['nombre_completo']))
-      Cliente: {{ $datosCliente['nombre_completo'] }} <br>
-    @endif
-    @if(!empty($datosCliente['dni']))
-      {{ $identificacion }}: {{ $datosCliente['dni'] }}<br>
-    @endif
-    Servicio: @if($paymentDetails['tipo_servicio'] == 0) Mesa @elseif($paymentDetails['tipo_servicio'] == 1) Delivery @else Para llevar @endif <br>
-    Fecha: {{ $fecha_atencion }} <br>
-    Hora: {{ date('H:i', strtotime($hora_atencion)) }}
-  </p>
-  <p class="center"><strong>Pedido # {{ $numero }}</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th class="cantidad">Cant</th>
-        <th class="producto">Prod</th>
-        <th class="punit">P.Unit</th>
-        <th class="importe">Importe</th>
-      </tr>
-    </thead>
-    <tbody>
-      @foreach($items as $item)
+  @if($result->count() > 0)
+    <h2>{{ $result[0]->nombre_restaurante }}</h2>
+    <h3>{{ $result[0]->nombre_sucursal }} - {{ $result[0]->nombre_caja }}</h3>
+    <p>
+      @if(!empty($result[0]->nombre_cliente))
+        Cliente: {{ $result[0]->nombre_cliente }} <br>
+      @endif
+      Servicio: {{ $result[0]->tipo_servicio }} <br>
+      Fecha: {{ $result[0]->fecha }} <br>
+      Hora: {{ $result[0]->hora }}
+    </p>
+    <p class="center"><strong>Pedido # {{ $result[0]->nro_pedido }}</strong></p>
+    <table>
+      <thead>
         <tr>
-          <td class="cantidad">{{ $item->cantidad }}x</td>
-          <td class="producto">{{ $item->detalle }}</td>
-          <td class="punit">{{ $item->p_unit }}</td>
-          <td class="importe">{{ $item->importe }}</td>
+          <th class="cantidad">Cant</th>
+          <th class="producto">Prod</th>
+          <th class="punit">P.Unit</th>
+          <th class="importe">Importe</th>
         </tr>
-      @endforeach
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        @foreach($result as $item)
+          <tr>
+            <td class="cantidad">{{ $item->cantidad }}x</td>
+            <td class="producto">{{ $item->nombre_producto }}</td>
+            <td class="punit">{{ $item->p_unit }}</td>
+            <td class="importe">{{ $item->importe }}</td>
+          </tr>
+        @endforeach
+      </tbody>
+    </table>
 
-  <hr>
-  <p class="total">TOTAL: {{ $paymentDetails['importe'] }} Bs</p>
+    <hr>
+    <p class="total">TOTAL: {{ $result[0]->total }} {{ $result[0]->tipo_moneda }}</p>
 
-  <p class="center">¡Gracias por su pedido!</p>
+    <p class="center">¡Gracias por su pedido!</p>
+  @else
+    <p class="center">Error!! al imprimir la comanda</p>
+  @endif
 </body>
 </html>
