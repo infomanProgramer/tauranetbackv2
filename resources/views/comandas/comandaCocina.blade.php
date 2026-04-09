@@ -62,9 +62,8 @@
   </style>
 </head>
 <body>
-  {{-- <h2>{{ $nombre_restaurant }}</h2>
-  <h3>{{ $sucursal }} - {{ $caja }}</h3> --}}
-  <h3 class="center"><strong>Pedido # {{ $numero }}</strong></h3>
+ @if($result->count() > 0)
+  <h3 class="center"><strong>Pedido # {{ $result[0]->nro_pedido }}</strong></h3>
   <p>
     @if(!empty($result[0]->nombre_cliente))
       Cliente: {{ $result[0]->nombre_cliente }} <br>
