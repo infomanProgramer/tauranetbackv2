@@ -81,6 +81,7 @@ class VentaProductoController extends ApiController
         return $response;
     } 
     public function updateVentaProducto(Request $request){
+        \Log::info('updateVentaProducto - request:', $request->all());
         $idVentaProducto = $request->input('id_venta_producto');
         $ventaProducto = VentaProducto::find($idVentaProducto);
         if($request->has('id_cliente') && $ventaProducto->id_cliente != $request->id_cliente){

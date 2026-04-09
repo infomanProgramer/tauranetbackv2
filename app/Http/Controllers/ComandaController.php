@@ -12,6 +12,7 @@ class ComandaController extends ApiController
     public function queryComanda($id_venta_producto){
         return DB::table('venta_productos as vp')
             ->select(
+                'vp.id_venta_producto',
                 'r.nombre as nombre_restaurante',
                 'r.tipo_moneda as tipo_moneda',
                 's.nombre as nombre_sucursal',
@@ -26,7 +27,11 @@ class ComandaController extends ApiController
                 'pv.importe',
                 'p.nombre as nombre_producto',
                 'pv.nota',
-                'pa.importe as total'
+                'pa.importe as total',
+                'pa.efectivo',
+                'pa.cambio',
+	            'pa.tipo_pago as cod_tipo_pago',
+	            'pa.tipo_servicio as cod_tipo_servicio'
             )
             ->join('pagos as pa', 'pa.id_venta_producto', '=', 'vp.id_venta_producto')
 

@@ -5,57 +5,65 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use PDF;
+use DB;
 
 class ComandaController extends ApiController
 {
+    public function queryComanda($id_venta_producto){
+        return DB::table('venta_productos as vp')
+            ->select(
+                'r.nombre as nombre_restaurante',
+                'r.tipo_moneda as tipo_moneda',
+                's.nombre as nombre_sucursal',
+                'c.nombre as nombre_caja',
+                'vp.nro_venta as nro_pedido',
+                'c2.nombre_completo as nombre_cliente',
+                'dd.descripcion as tipo_servicio',
+                DB::raw('DATE(vp.created_at) as fecha'),
+                DB::raw("to_char(vp.created_at, 'HH24:MI') as hora"),
+                'pv.cantidad',
+                'pv.p_unit',
+                'pv.importe',
+                'p.nombre as nombre_producto',
+                'pv.nota',
+                'pa.importe as total'
+            )
+            ->join('pagos as pa', 'pa.id_venta_producto', '=', 'vp.id_venta_producto')
+
+            ->join('diccionario_datos as dd', function ($join) {
+                $join->on('dd.codigo', '=', 'pa.tipo_servicio')
+                    ->where('dd.tabla', 'pagos')
+                    ->where('dd.campo', 'tipo_servicio');
+            })
+            ->leftJoin('clientes as c2', 'c2.id_cliente', '=', 'vp.id_cliente')
+            ->join('historial_caja as hc', 'hc.id_historial_caja', '=', 'vp.id_historial_caja')
+            ->join('cajas as c', 'c.id_caja', '=', 'hc.id_caja')
+            ->join('sucursals as s', 's.id_sucursal', '=', 'c.id_sucursal')
+            ->join('restaurants as r', 'r.id_restaurant', '=', 's.id_restaurant')
+            ->join('producto_vendidos as pv', 'pv.id_venta_producto', '=', 'vp.id_venta_producto')
+            ->join('productos as p', 'p.id_producto', '=', 'pv.id_producto')
+            ->where('vp.id_venta_producto', $id_venta_producto)
+            ->orderBy('pv.id_producto_vendido', 'asc')
+            ->get();
+    }
+
     public function verComanda(Request $request)
     {
-        \Log::info('metodo verComanda:');
-        \Log::info('Request data:', $request->all());
-        
-        $nombre_restaurant = $request->input('nombre_restaurant');
-        $sucursal = $request->input('sucursal');
-        $caja = $request->input('caja');
-        $nro_pedido = $request->input('nro_pedido');
-        $listaProductos = $request->input('listaProductos');
-        $datosCliente = $request->input('datosCliente');
-        $paymentDetails = $request->input('paymentDetails');
-        $identificacion = $request->input('identificacion');
-        $isForCustomer = $request->input('isForCustomer');
-        $fecha_atencion = $request->input('fecha_atencion');
-        $hora_atencion = $request->input('hora_atencion');
 
-        //Parsear lista de productos
-        $listaProductos = explode(':', $listaProductos);
-        $listaProductos = array_map(function ($item) {
-            list($id_producto, $cantidad, $p_unit, $importe, $nota, $p_base, $importe_base, $detalle) = explode('|', $item);
-            return (object) [
-                'id_producto' => $id_producto,
-                'cantidad' => $cantidad,
-                'p_unit' => $p_unit,
-                'importe' => $importe,
-                'nota' => $nota,
-                'p_base' => $p_base,
-                'importe_base' => $importe_base,
-                'detalle' => $detalle
-            ];
-        }, $listaProductos);
-  
-        //obtener fecha actual
-        $fechaActual = date('d/m/Y');
-        
+        $result = $this->queryComanda($request->input('id_venta_producto'));
+        if ($result->count() == 0) {
+            $nro_pedido = 0;
+            $fechaActual = date('d/m/Y');
+        } else {
+            $nro_pedido = $result[0]->nro_pedido;
+            $fechaActual = $result[0]->fecha;
+        }
+        $isForCustomer = $request->input('isForCustomer');
+
         $data = [
-            'numero' => $nro_pedido,
-            'datosCliente' => $datosCliente,
-            'items'  => $listaProductos,
-            'paymentDetails' => $paymentDetails,
-            'nombre_restaurant' => $nombre_restaurant,
-            'sucursal' => $sucursal,
-            'caja' => $caja,
-            'fecha_atencion' => $fecha_atencion,
-            'hora_atencion' => $hora_atencion,
-            'identificacion' => $identificacion
+            'result' => $result
         ];
+
         if($isForCustomer){
             $pdf = PDF::loadView('comandas.comandaCliente', $data);
             return $pdf->download('comandaCliente'.$fechaActual.'-'.$nro_pedido.'.pdf');
