@@ -92,6 +92,7 @@ Route::group([
     //Rutas Administrador, SuperAdministrador
     Route::group(['middleware' => 'auth:sadmin,admin'], function () {
         Route::get('sucursal/restaurant/{pag}/', 'SucursalController@sucursalPorRestaurante');
+        Route::get('sucursal/restaurantadmin/{pag}/{id_restaurante}', 'SucursalController@sucursalPorRestauranteAdmin');
         Route::get('restaurant/{id}', 'RestaurantController@show');
     });
 

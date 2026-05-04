@@ -65,7 +65,7 @@ class CategoriaProductoController extends ApiController
     {
         \Log::info($request);
         $dataValidation = [
-            'nombre' => 'required|min:4|max:20',
+            'nombre' => 'required|min:4|max:15',
             'id_restaurant' => 'required|exists:restaurants,id_restaurant',
         ];
         if ($request->get("id_administrador") !== null) {
@@ -81,7 +81,7 @@ class CategoriaProductoController extends ApiController
         $messages = [
             'nombre.required' => 'La categoria es requerida',
             'nombre.min' => 'La categoria tiene que tener 4 caracteres como mínimo',
-            'nombre.max' => 'La categoria tiene que tener 20 caracteres como maximo',
+            'nombre.max' => 'La categoria tiene que tener 15 caracteres como maximo',
             'id_administrador.required' => 'El administrador es requerido',
             'id_administrador.exists' => 'El administrador no existe',
             'id_restaurant.required' => 'El restaurante es requerido',
@@ -121,7 +121,7 @@ class CategoriaProductoController extends ApiController
         \Log::info($request);
         $cproducto = CategoriaProducto::find($id);
         $dataValidation = [
-            'nombre' => 'required|min:4|max:20',
+            'nombre' => 'required|min:4|max:15',
             'id_restaurant' => 'required|exists:restaurants,id_restaurant',
         ];
         if ($request->get("id_administrador") !== null) {
@@ -137,7 +137,7 @@ class CategoriaProductoController extends ApiController
         $messages = [
             'nombre.required' => 'La categoria es requerida',
             'nombre.min' => 'La categoria tiene que tener 4 caracteres como mínimo',
-            'nombre.max' => 'La categoria tiene que tener 20 caracteres como maximo',
+            'nombre.max' => 'La categoria tiene que tener 15 caracteres como maximo',
             'id_administrador.required' => 'El administrador es requerido',
             'id_administrador.exists' => 'El administrador no existe',
             'id_restaurant.required' => 'El restaurante es requerido',

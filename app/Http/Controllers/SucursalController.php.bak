@@ -197,11 +197,6 @@ class SucursalController extends ApiController
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|min:4|max:50|regex:/^[a-zA-Z0-9\s]+$/',
             'descripcion' => 'min:5|nullable',
-            // 'direccion' => 'required|min:5|nullable',
-            // 'telefono' => 'required_without_all:celular',
-            // 'celular' => 'required_without_all:telefono',
-            // 'ciudad' => 'required|min:3|max:20|nullable',
-            // 'pais' => 'required|min:3|max:20|nullable',
             'id_superadministrador' => 'required|exists:superadministradors,id_superadministrador',
             'id_restaurant' => 'required|not_in:-1|exists:restaurants,id_restaurant'
 
@@ -276,12 +271,51 @@ class SucursalController extends ApiController
         if($request->has('id_restaurant')){
             $sucursal->id_restaurant = $request->id_restaurant;
         }
+        if($request->has('prefijo')){
+            $sucursal->prefijo = $request->prefijo;
+        }
+        if($request->has('nuevo_numero')){
+            $sucursal->nuevo_numero = $request->nuevo_numero;
+        }
         if(!$sucursal->isDirty()){
             return $this->errorResponse(['valores' => 'Se debe modificar al menos un valor para poder actualizar'], 201);
         }
         $sucursal->save();
         return response()->json(['data' => $sucursal], 201);
     }
+
+    public function updateWhatsapp(Request $request, $id)
+    {
+        Log::info("Request data:", $request->all());
+        $validator = Validator::make($request->all(), [
+            'nuevo_prefijo' => 'required',
+            'nuevo_numero' => 'required',
+        ]);
+        $validator->setCustomMessages([
+            'nuevo_prefijo.required' => 'El prefijo es requerido',
+            'nuevo_numero.required' => 'El nuevo número es requerido',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(["error" => $validator->errors()], 201);
+        }
+
+        
+        $sucursal = Sucursal::find($id);
+
+        if($request->has('nuevo_prefijo')){
+            $sucursal->prefijo = $request->nuevo_prefijo;
+        }
+        if($request->has('nuevo_numero')){
+            $sucursal->whatsapp_cocina = $request->nuevo_numero;
+        }
+        if(!$sucursal->isDirty()){
+            return $this->errorResponse(['valores' => 'Se debe modificar al menos un valor para poder actualizar'], 201);
+        }
+        $sucursal->save();
+        return response()->json(['data' => $sucursal], 201);
+    }
+
 
     /**
      * Remove the specified resource from storage.

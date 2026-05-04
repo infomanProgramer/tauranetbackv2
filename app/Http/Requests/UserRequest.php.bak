@@ -32,15 +32,15 @@ class UserRequest extends FormRequest
             'segundo_nombre' => 'required_without_all:primer_nombre',
             'paterno' => 'required_without_all:materno',
             'materno' => 'required_without_all:paterno',
+            //'email' => 'email|unique:users|nullable',
+            //'dni' => 'unique:users|min:3|max:100|nullable',
+            //'sexo' => 'required|boolean',
+            //'direccion' => 'required',
             'nombre_usuario' => 'required|unique:users|min:4|max:12',
-            'password' => [
-                'required',
-                'min:8',
-                'regex:/[A-Z]/',
-                'regex:/[0-9]/',
-                'regex:/[^A-Za-z0-9]/',
-                'confirmed'
-            ],
+            'password' => 'required|min:6|confirmed',
+            //'fecha_nac' => 'date:dd/mm/YYYY|nullable',
+            //'celular' => 'required_without_all:telefono',
+            //'telefono' => 'required_without_all:celular',
             'tipo_usuario' => 'required'
         ];
     }
@@ -53,16 +53,16 @@ class UserRequest extends FormRequest
             'segundo_nombre' => 'required_without_all:primer_nombre',
             'paterno' => 'required_without_all:materno',
             'materno' => 'required_without_all:paterno',
+            //'email' => 'email|unique:users,email,'.$user->id_usuario.',id_usuario|nullable',
+            //'dni' => 'unique:users,dni,'.$user->id_usuario.',id_usuario|min:3|max:100|nullable',
+            //'sexo' => 'required|boolean',
+            //'estado' => 'required|boolean',
+            //'direccion' => 'required',
             'nombre_usuario' => 'required|unique:users,nombre_usuario,'.$user->id_usuario.',id_usuario|min:4|max:12',
-            'tipo_usuario' => 'required',
-            'password' => [
-                'nullable',
-                'min:8',
-                'regex:/[A-Z]/',
-                'regex:/[0-9]/',
-                'regex:/[^A-Za-z0-9]/',
-                'confirmed'
-            ]
+            //'fecha_nac' => 'date:dd/mm/YYYY|nullable',
+            //'celular' => 'required_without_all:telefono',
+            //'telefono' => 'required_without_all:celular',
+            'tipo_usuario' => 'required'
         ];
 
         return $rules;
@@ -117,10 +117,9 @@ class UserRequest extends FormRequest
             'correo.required' => 'El Correo es requerido',
             'correo.email' => 'El Correo no tiene el formato correcto',
 
-            'password.required' => 'El Password es requerido',
-            'password.min' => 'El Password tiene que tener 8 caracteres como mínimo',
-            'password.regex' => 'El Password debe contener al menos una mayúscula, un número y un carácter especial',
-            'password.confirmed' => 'El Password debe ser confirmado',
+            'password.required' => 'El Passoword es requerido',
+            'password.min' => 'El Password tiene que tener 6 caracteres como mínimo',
+            'password.confirmed' => 'El Password debé ser confirmado',
 
             'fecha_nac.required' => 'La fecha de nacimiento es requerida',
             'fecha_nac.date' => 'La fecha no tiene el formato correcto',

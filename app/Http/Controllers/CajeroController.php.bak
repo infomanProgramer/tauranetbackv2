@@ -19,6 +19,11 @@ class CajeroController extends ApiController
             'id_restaurant' => 'required|not_in:-1|exists:restaurants,id_restaurant',
             'id_sucursal' => 'required|not_in:-1|exists:sucursals,id_sucursal',
             'id_caja' => 'required|not_in:-1|exists:cajas,id_caja',
+            function ($attribute, $value, $fail) {
+                if (!$this->has('id_administrador') && !$this->has('id_superadministrador')) {
+                    $fail('Debe ingresar al menos un campo entre id_administrador o id_superadministrador');
+                }
+            }
         ];
         $locaMessages = [
             'id_administrador.required' => 'El Administrador es requerido',
@@ -35,13 +40,6 @@ class CajeroController extends ApiController
         $allRules = (new UserRequest())->rules() + $localRules;
         $allMessages = (new UserRequest())->messages() + $locaMessages;
         $validator = Validator::make($request->all(), $allRules, $allMessages);
-
-        // Validación personalizada: al menos uno de los dos IDs debe estar presente
-        $validator->after(function ($validator) use ($request) {
-            if (!$request->has('id_administrador') && !$request->has('id_superadministrador')) {
-                $validator->errors()->add('id_administrador', 'Debe ingresar al menos un campo entre id_administrador o id_superadministrador');
-            }
-        });
 
         $validator->sometimes('primer_nombre', 'min:4|max:100', function($input){
             return ! empty( $input->primer_nombre );

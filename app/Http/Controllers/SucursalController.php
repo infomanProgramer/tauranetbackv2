@@ -44,18 +44,18 @@ class SucursalController extends ApiController
             return $response;
         }
     }
-    // public function sucursalPorRestaurante($pag, $id){
-    //     $restaurant = DB::table('sucursals as s')
-    //         ->join('restaurants as r', function($join){
-    //             $join->on( 'r.id_restaurant', '=', 's.id_restaurant');
-    //         })
-    //         ->where('s.id_restaurant', '=', $id)
-    //         ->select('s.*', 'r.nombre as nombreRestaurante')
-    //         ->orderBy('s.created_at', 'desc')
-    //         ->paginate($pag);
-    //     $response = Response::json(['data' => $restaurant], 200);
-    //     return $response;
-    // }
+    public function sucursalPorRestauranteAdmin($pag, $id){
+        $restaurant = DB::table('sucursals as s')
+            ->join('restaurants as r', function($join){
+                $join->on( 'r.id_restaurant', '=', 's.id_restaurant');
+            })
+            ->where('s.id_restaurant', '=', $id)
+            ->select('s.*', 'r.nombre as nombreRestaurante')
+            ->orderBy('s.created_at', 'desc')
+            ->paginate($pag);
+        $response = Response::json(['data' => $restaurant], 200);
+        return $response;
+    }
     public function sucursalPorRestaurante($pag){
         $restaurant = DB::table('sucursals as s')
             ->join('restaurants as r', function($join){
